@@ -1,0 +1,14 @@
+app:
+  name: "subscription_service"
+  version: "0.0.1"
+  log_level: "debug"
+http:
+  host: "localhost"
+  port: "8080"
+pg:
+  user: "user"
+  password: "password"
+  host: "localhost"
+  port: "5432"
+  database: "subscription_db"
+  migrations_path: "file://config/pg/migrations"
