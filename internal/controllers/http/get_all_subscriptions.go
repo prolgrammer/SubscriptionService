@@ -12,13 +12,13 @@ import (
 )
 
 type getListSubController struct {
-	useCase usecases.GetListSubUsecase
+	useCase usecases.GetListSubUseCase
 	logger  logger.Logger
 }
 
 func NewGetListSubController(
 	handler *gin.Engine,
-	useCase usecases.GetListSubUsecase,
+	useCase usecases.GetListSubUseCase,
 	middleware middleware.Middleware,
 	logger logger.Logger,
 ) {

@@ -12,13 +12,13 @@ import (
 )
 
 type CalculateTotalCostController struct {
-	useCase usecases.CalculateTotalCostUsecase
+	useCase usecases.CalculateTotalCostUseCase
 	logger  logger.Logger
 }
 
 func NewCalculateTotalCostController(
 	handler *gin.Engine,
-	useCase usecases.CalculateTotalCostUsecase,
+	useCase usecases.CalculateTotalCostUseCase,
 	middleware middleware.Middleware,
 	logger logger.Logger,
 ) {

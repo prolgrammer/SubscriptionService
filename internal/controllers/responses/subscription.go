@@ -1,6 +1,7 @@
 package responses
 
 type SubResponse struct {
+	ID          string `json:"id" binding:"required"`
 	ServiceName string `json:"service_name" binding:"required"`
 	Price       int    `json:"price" binding:"required"`
 	UserID      string `json:"user_id" binding:"required"`

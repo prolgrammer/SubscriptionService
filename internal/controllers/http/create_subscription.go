@@ -12,13 +12,13 @@ import (
 )
 
 type createSubController struct {
-	useCase usecases.CreateSubUsecase
+	useCase usecases.CreateSubUseCase
 	logger  logger.Logger
 }
 
 func NewCreateSubController(
 	handler *gin.Engine,
-	useCase usecases.CreateSubUsecase,
+	useCase usecases.CreateSubUseCase,
 	middleware middleware.Middleware,
 	logger logger.Logger,
 ) {
@@ -48,7 +48,7 @@ func (cs *createSubController) CreateSubscription(c *gin.Context) {
 		return
 	}
 
-	response, err := cs.useCase.CreateSubscription(req)
+	response, err := cs.useCase.CreateSubscription(c, req)
 	if err != nil {
 		middleware.AddGinError(c, errors.Wrap(err, "failed to create subscription"))
 		return

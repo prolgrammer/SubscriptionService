@@ -27,6 +27,11 @@ func (m *middleware) HandleErrors(c *gin.Context) {
 			return
 		}
 
+		if errors.Is(err, usecases.ErrInvalidUUID) || errors.Is(err, usecases.ErrInvalidDateFormat) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+			return
+		}
+
 		m.logger.Err(err).Error().Msgf("Unexpected error: ")
 		c.AbortWithStatusJSON(http.StatusInternalServerError, "Internal server error")
 	}

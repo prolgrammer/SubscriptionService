@@ -12,13 +12,13 @@ import (
 )
 
 type updateSubController struct {
-	useCase usecases.UpdateSubUsecase
+	useCase usecases.UpdateSubUseCase
 	logger  logger.Logger
 }
 
 func NewUpdateSubController(
 	handler *gin.Engine,
-	useCase usecases.UpdateSubUsecase,
+	useCase usecases.UpdateSubUseCase,
 	middleware middleware.Middleware,
 	logger logger.Logger,
 ) {
@@ -56,7 +56,7 @@ func (us *updateSubController) UpdateSubscription(c *gin.Context) {
 		return
 	}
 
-	response, err := us.useCase.UpdateSubscription
+	response, err := us.useCase.UpdateSubscription(c, subId, req)
 	if err != nil {
 		middleware.AddGinError(c, errors.Wrap(err, "failed to update subscription"))
 		return

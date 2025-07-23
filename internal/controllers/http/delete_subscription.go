@@ -11,13 +11,13 @@ import (
 )
 
 type deleteSubController struct {
-	useCase usecases.DeleteSubUsecase
+	useCase usecases.DeleteSubUseCase
 	logger  logger.Logger
 }
 
 func NewDeleteSubController(
 	handler *gin.Engine,
-	useCase usecases.DeleteSubUsecase,
+	useCase usecases.DeleteSubUseCase,
 	middleware middleware.Middleware,
 	logger logger.Logger,
 ) {
@@ -47,7 +47,7 @@ func (ds *deleteSubController) DeleteSubscription(c *gin.Context) {
 		return
 	}
 
-	if err := ds.useCase.DeleteSubscription(subId); err != nil {
+	if err := ds.useCase.DeleteSubscription(c, subId); err != nil {
 		middleware.AddGinError(c, errors.Wrap(err, "failed to delete subscription"))
 		return
 	}
