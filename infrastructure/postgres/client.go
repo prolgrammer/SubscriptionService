@@ -17,7 +17,7 @@ import (
 
 const (
 	_defaultConnAttempts = 10
-	_defaultConnTimeout  = 10 * time.Second
+	_defaultConnTimeout  = 5 * time.Second
 )
 
 var ErrNoChanges = errors.New("no changes applied")

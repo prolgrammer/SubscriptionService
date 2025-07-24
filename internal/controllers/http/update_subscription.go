@@ -36,7 +36,7 @@ func NewUpdateSubController(
 // @Tags subscriptions
 // @Accept json
 // @Produce json
-// @Param id path string true "path format"
+// @Param sub_id path string true "path format"
 // @Param subscription body requests.SubRequest true "структура запроса"
 // @Success 	 200 {object} responses.SubResponse
 // @Failure 	 400 {object} string "некорректный формат запроса"

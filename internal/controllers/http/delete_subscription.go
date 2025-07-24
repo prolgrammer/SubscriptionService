@@ -34,7 +34,7 @@ func NewDeleteSubController(
 // @Description Удаление подписки по ID
 // @Tags subscriptions
 // @Produce json
-// @Param id path string true "path format"
+// @Param sub_id path string true "path format"
 // @Success 200
 // @Failure 	 400 {object} string "некорректный формат запроса"
 // @Failure      404 {object} string "подписка не найдена"

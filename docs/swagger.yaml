@@ -145,7 +145,7 @@ paths:
       parameters:
       - description: path format
         in: path
-        name: id
+        name: sub_id
         required: true
         type: string
       produces:
@@ -173,7 +173,7 @@ paths:
       parameters:
       - description: path format
         in: path
-        name: id
+        name: sub_id
         required: true
         type: string
       produces:
@@ -205,7 +205,7 @@ paths:
       parameters:
       - description: path format
         in: path
-        name: id
+        name: sub_id
         required: true
         type: string
       - description: структура запроса

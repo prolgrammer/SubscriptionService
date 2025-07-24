@@ -170,7 +170,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "path format",
-                        "name": "id",
+                        "name": "sub_id",
                         "in": "path",
                         "required": true
                     }
@@ -218,7 +218,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "path format",
-                        "name": "id",
+                        "name": "sub_id",
                         "in": "path",
                         "required": true
                     },
@@ -272,7 +272,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "path format",
-                        "name": "id",
+                        "name": "sub_id",
                         "in": "path",
                         "required": true
                     }
