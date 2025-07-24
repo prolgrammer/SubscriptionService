@@ -3,12 +3,10 @@ package usecases
 import (
 	"context"
 	"errors"
-	"net/http"
 	"subscription_service/pkg/logger"
 	"testing"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -16,20 +14,19 @@ import (
 )
 
 var (
-	mockLogger           *logger.MockLogger
 	mockCalculateSubRepo *MockCalculateTotalCostRepository
+	mockLogger           *logger.MockLogger
 )
 
 func initCalculateTotalCostTestMocks(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockCalculateSubRepo = NewMockCalculateTotalCostRepository(ctrl)
-	mockLogger = logger.NewMockLogger(ctrl)
+	mockLogger = logger.NewMockLogger(t)
 }
 
 func TestCalculateTotalCost_Success(t *testing.T) {
 	initCalculateTotalCostTestMocks(t)
 	ctx := context.Background()
-	c, _ := gin.CreateTestContext(nil)
 	startPeriod, _ := time.Parse("2006-01-02", "2025-07-01")
 	endPeriod, _ := time.Parse("2006-01-02", "2025-12-01")
 	userID := uuid.New().String()
@@ -45,7 +42,7 @@ func TestCalculateTotalCost_Success(t *testing.T) {
 	mockCalculateSubRepo.EXPECT().CalculateTotalCost(ctx, startPeriod, endPeriod, &userID, &serviceName).Return(400, nil)
 
 	useCase := NewCalculateTotalCostUseCase(mockCalculateSubRepo, mockLogger)
-	response, err := useCase.CalculateTotalCost(c, req)
+	response, err := useCase.CalculateTotalCost(ctx, req)
 
 	assert.NoError(t, err)
 	assert.Equal(t, 400, response.Total)
@@ -54,7 +51,6 @@ func TestCalculateTotalCost_Success(t *testing.T) {
 func TestCalculateTotalCost_Success_NoFilters(t *testing.T) {
 	initCalculateTotalCostTestMocks(t)
 	ctx := context.Background()
-	c, _ := gin.CreateTestContext(nil)
 	startPeriod, _ := time.Parse("2006-01-02", "2025-07-01")
 	endPeriod, _ := time.Parse("2006-01-02", "2025-12-01")
 
@@ -66,7 +62,7 @@ func TestCalculateTotalCost_Success_NoFilters(t *testing.T) {
 	mockCalculateSubRepo.EXPECT().CalculateTotalCost(ctx, startPeriod, endPeriod, nil, nil).Return(700, nil)
 
 	useCase := NewCalculateTotalCostUseCase(mockCalculateSubRepo, mockLogger)
-	response, err := useCase.CalculateTotalCost(c, req)
+	response, err := useCase.CalculateTotalCost(ctx, req)
 
 	assert.NoError(t, err)
 	assert.Equal(t, 700, response.Total)
@@ -74,14 +70,14 @@ func TestCalculateTotalCost_Success_NoFilters(t *testing.T) {
 
 func TestCalculateTotalCost_Failure_InvalidStartPeriod(t *testing.T) {
 	initCalculateTotalCostTestMocks(t)
-	c, _ := gin.CreateTestContext(nil)
+	ctx := context.Background()
 	req := requests.CalculateTotalCost{
 		StartPeriod: "invalid-date",
 		EndPeriod:   "12-2025",
 	}
 
 	useCase := NewCalculateTotalCostUseCase(mockCalculateSubRepo, mockLogger)
-	_, err := useCase.CalculateTotalCost(c, req)
+	_, err := useCase.CalculateTotalCost(ctx, req)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, ErrInvalidDateFormat)
@@ -89,14 +85,14 @@ func TestCalculateTotalCost_Failure_InvalidStartPeriod(t *testing.T) {
 
 func TestCalculateTotalCost_Failure_InvalidEndPeriod(t *testing.T) {
 	initCalculateTotalCostTestMocks(t)
-	c, _ := gin.CreateTestContext(nil)
+	ctx := context.Background()
 	req := requests.CalculateTotalCost{
 		StartPeriod: "07-2025",
 		EndPeriod:   "invalid-date",
 	}
 
 	useCase := NewCalculateTotalCostUseCase(mockCalculateSubRepo, mockLogger)
-	_, err := useCase.CalculateTotalCost(c, req)
+	_, err := useCase.CalculateTotalCost(ctx, req)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, ErrInvalidDateFormat)
@@ -104,7 +100,7 @@ func TestCalculateTotalCost_Failure_InvalidEndPeriod(t *testing.T) {
 
 func TestCalculateTotalCost_Failure_InvalidUserID(t *testing.T) {
 	initCalculateTotalCostTestMocks(t)
-	c, _ := gin.CreateTestContext(nil)
+	ctx := context.Background()
 	req := requests.CalculateTotalCost{
 		StartPeriod: "07-2025",
 		EndPeriod:   "12-2025",
@@ -112,7 +108,7 @@ func TestCalculateTotalCost_Failure_InvalidUserID(t *testing.T) {
 	}
 
 	useCase := NewCalculateTotalCostUseCase(mockCalculateSubRepo, mockLogger)
-	_, err := useCase.CalculateTotalCost(c, req)
+	_, err := useCase.CalculateTotalCost(ctx, req)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, ErrInvalidUUID)
@@ -121,7 +117,6 @@ func TestCalculateTotalCost_Failure_InvalidUserID(t *testing.T) {
 func TestCalculateTotalCost_Failure_DatabaseError(t *testing.T) {
 	initCalculateTotalCostTestMocks(t)
 	ctx := context.Background()
-	c, _ := gin.CreateTestContext(nil)
 	startPeriod, _ := time.Parse("2006-01-02", "2025-07-01")
 	endPeriod, _ := time.Parse("2006-01-02", "2025-12-01")
 
@@ -131,10 +126,10 @@ func TestCalculateTotalCost_Failure_DatabaseError(t *testing.T) {
 	}
 
 	expectedErr := errors.New("database error")
-	mockCalculateSubRepo.EXPECT().CalculateTotalCost(ctx, startPeriod, endPeriod, nil, nil).Return(700, nil)
+	mockCalculateSubRepo.EXPECT().CalculateTotalCost(ctx, startPeriod, endPeriod, nil, nil).Return(700, expectedErr)
 
 	useCase := NewCalculateTotalCostUseCase(mockCalculateSubRepo, mockLogger)
-	_, err := useCase.CalculateTotalCost(c, req)
+	_, err := useCase.CalculateTotalCost(ctx, req)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, expectedErr)

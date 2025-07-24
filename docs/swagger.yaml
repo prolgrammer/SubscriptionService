@@ -3,12 +3,16 @@ definitions:
   requests.CalculateTotalCost:
     properties:
       end_period:
+        example: 12-2025
         type: string
       service_name:
+        example: Yandex Plus
         type: string
       start_period:
+        example: 07-2025
         type: string
       user_id:
+        example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
         type: string
     required:
     - end_period
@@ -17,14 +21,19 @@ definitions:
   requests.SubRequest:
     properties:
       end_date:
+        example: 12-2025
         type: string
       price:
+        example: 400
         type: integer
       service_name:
+        example: Yandex Plus
         type: string
       start_date:
+        example: 07-2025
         type: string
       user_id:
+        example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
         type: string
     required:
     - price
@@ -99,6 +108,8 @@ paths:
           schema:
             type: string
       summary: Получение списка подписок
+      tags:
+      - subscriptions
     post:
       consumes:
       - application/json

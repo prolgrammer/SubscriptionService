@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  task_service:
+  subscription_service:
     container_name: "subscription_service"
     build:
       context: .

@@ -21,6 +21,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "subscriptions"
+                ],
                 "summary": "Получение списка подписок",
                 "parameters": [
                     {
@@ -309,16 +312,20 @@ const docTemplate = `{
             ],
             "properties": {
                 "end_period": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "12-2025"
                 },
                 "service_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Yandex Plus"
                 },
                 "start_period": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "07-2025"
                 },
                 "user_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "60601fee-2bf1-4721-ae6f-7636e79a0cba"
                 }
             }
         },
@@ -332,19 +339,24 @@ const docTemplate = `{
             ],
             "properties": {
                 "end_date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "12-2025"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 400
                 },
                 "service_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Yandex Plus"
                 },
                 "start_date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "07-2025"
                 },
                 "user_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "60601fee-2bf1-4721-ae6f-7636e79a0cba"
                 }
             }
         },

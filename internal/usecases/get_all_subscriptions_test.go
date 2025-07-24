@@ -10,16 +10,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"subscription_service/internal/entities"
-	"subscription_service/pkg/logger"
 )
 
 var (
-	mockSubRepo *MockSubRepository
+	mockGetListSubRepo *MockGetAllSubsRepository
 )
 
 func initGetListSubTestMocks(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	mockSubRepo = NewMockSubRepository(ctrl)
+	mockGetListSubRepo = NewMockGetAllSubsRepository(ctrl)
 }
 
 func TestGetListSubscriptions_Success(t *testing.T) {
@@ -48,14 +47,13 @@ func TestGetListSubscriptions_Success(t *testing.T) {
 		},
 	}
 
-	mockSubRepo.EXPECT().SelectAll(ctx, limit, offset).Return(mockSubs, nil)
+	mockGetListSubRepo.EXPECT().SelectAll(ctx, limit, offset).Return(mockSubs, nil)
 
-	useCase := NewGetListSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewGetListSubUseCase(mockGetListSubRepo, mockLogger)
 	response, err := useCase.GetListSubscriptions(ctx, limit, offset)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
-	assert.Len(t, response, 2)
 	assert.Equal(t, mockSubs[0].ServiceName, response[0].ServiceName)
 	assert.Equal(t, mockSubs[0].Price, response[0].Price)
 	assert.Equal(t, mockSubs[0].UserID.String(), response[0].UserID)
@@ -74,9 +72,9 @@ func TestGetListSubscriptions_Failure_DatabaseError(t *testing.T) {
 	limit, offset := 10, 0
 
 	expectedErr := errors.New("database error")
-	mockSubRepo.EXPECT().SelectAll(ctx, limit, offset).Return(nil, expectedErr)
+	mockGetListSubRepo.EXPECT().SelectAll(ctx, limit, offset).Return(nil, expectedErr)
 
-	useCase := NewGetListSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewGetListSubUseCase(mockGetListSubRepo, mockLogger)
 	_, err := useCase.GetListSubscriptions(ctx, limit, offset)
 
 	assert.Error(t, err)

@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"subscription_service/internal/controllers/requests"
@@ -11,7 +11,7 @@ import (
 )
 
 type CalculateTotalCostUseCase interface {
-	CalculateTotalCost(c *gin.Context, req requests.CalculateTotalCost) (responses.CalculateTotalCost, error)
+	CalculateTotalCost(c context.Context, req requests.CalculateTotalCost) (responses.CalculateTotalCost, error)
 }
 
 type calculateTotalCostUseCase struct {
@@ -26,7 +26,7 @@ func NewCalculateTotalCostUseCase(subRepo CalculateTotalCostRepository, logger l
 	}
 }
 
-func (c *calculateTotalCostUseCase) CalculateTotalCost(ginCtx *gin.Context, req requests.CalculateTotalCost) (responses.CalculateTotalCost, error) {
+func (c *calculateTotalCostUseCase) CalculateTotalCost(ginCtx context.Context, req requests.CalculateTotalCost) (responses.CalculateTotalCost, error) {
 	startPeriod, err := time.Parse("01-2006", req.StartPeriod)
 	if err != nil {
 		c.logger.Error().Err(err).Msg("Invalid start_period format")
@@ -53,7 +53,7 @@ func (c *calculateTotalCostUseCase) CalculateTotalCost(ginCtx *gin.Context, req 
 		serviceName = &req.ServiceName
 	}
 
-	ctx := ginCtx.Request.Context()
+	ctx := ginCtx
 	total, err := c.subRepo.CalculateTotalCost(ctx, startPeriod, endPeriod, userID, serviceName)
 	if err != nil {
 		c.logger.Error().Err(err).Msg("Failed to calculate total cost")

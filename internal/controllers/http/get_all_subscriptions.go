@@ -33,6 +33,7 @@ func NewGetListSubController(
 // GetListSubscriptions godoc
 // @Summary Получение списка подписок
 // @Description Возвращает список подписок с поддержкой пагинации
+// @Tags subscriptions
 // @Produce      json
 // @Param limit query int false "Количество подписок на странице" default(10)
 // @Param offset query int false "Смещение" default(0)
@@ -53,7 +54,7 @@ func (gl *getListSubController) GetListSubscriptions(c *gin.Context) {
 		return
 	}
 
-	response, err := gl.useCase.GetListSubscriptions(limit, offset)
+	response, err := gl.useCase.GetListSubscriptions(c, limit, offset)
 	if err != nil {
 		middleware.AddGinError(c, errors.Wrap(err, "failed to get list subscription"))
 

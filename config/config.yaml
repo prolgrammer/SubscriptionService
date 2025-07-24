@@ -5,7 +5,7 @@ app:
 http:
   host: "${HTTP_HOST}"
   port: "${HTTP_PORT}"
-pg:
+postgres:
   user: "${POSTGRES_USER}"
   password: "${POSTGRES_PASSWORD}"
   host: "${POSTGRES_HOST}"

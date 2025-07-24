@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"subscription_service/internal/controllers/responses"
@@ -14,7 +14,7 @@ type getSubUseCase struct {
 }
 
 type GetSubUseCase interface {
-	GetSubscription(c *gin.Context, subID string) (responses.SubResponse, error)
+	GetSubscription(c context.Context, subID string) (responses.SubResponse, error)
 }
 
 func NewGetSubUseCase(subRepo GetSubRepository, logger logger.Logger) GetSubUseCase {
@@ -24,13 +24,13 @@ func NewGetSubUseCase(subRepo GetSubRepository, logger logger.Logger) GetSubUseC
 	}
 }
 
-func (g *getSubUseCase) GetSubscription(c *gin.Context, subID string) (responses.SubResponse, error) {
+func (g *getSubUseCase) GetSubscription(c context.Context, subID string) (responses.SubResponse, error) {
 	if _, err := uuid.Parse(subID); err != nil {
 		g.logger.Error().Err(err).Msg("Invalid sub_id format")
 		return responses.SubResponse{}, errors.Wrap(ErrInvalidUUID, "failed to parse sub_id")
 	}
 
-	sub, err := g.subRepo.SelectByID(c.Request.Context(), subID)
+	sub, err := g.subRepo.SelectByID(c, subID)
 	if err != nil {
 		g.logger.Error().Err(err).Msg("Failed to get subscription")
 		return responses.SubResponse{}, errors.Wrap(err, "failed to get subscription")

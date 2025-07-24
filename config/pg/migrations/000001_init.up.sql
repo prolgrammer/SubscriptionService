@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS subscriptions
     price INTEGER not null check (price > 0),
     user_id UUID not null,
     start_date DATE not null,
-    end_date DATE,
+    end_date DATE
 );
 
 CREATE INDEX IF NOT EXISTS idx_user_id ON subscriptions(user_id);

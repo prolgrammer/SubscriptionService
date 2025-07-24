@@ -3,11 +3,9 @@ package usecases
 import (
 	"context"
 	"errors"
-	"net/http"
 	"testing"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -15,19 +13,17 @@ import (
 )
 
 var (
-	mockSubRepo *MockSubRepository
+	mockGetSubRepo *MockGetSubRepository
 )
 
 func initGetSubTestMocks(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	mockSubRepo = NewMockSubRepository(ctrl)
+	mockGetSubRepo = NewMockGetSubRepository(ctrl)
 }
 
 func TestGetSubscription_Success(t *testing.T) {
 	initGetSubTestMocks(t)
 	ctx := context.Background()
-	c, _ := gin.CreateTestContext(nil)
-	c.Request = &http.Request{Context: ctx}
 	subID := uuid.New().String()
 	startDate, _ := time.Parse("2006-01-02", "2025-07-01")
 	endDate, _ := time.Parse("2006-01-02", "2025-12-01")
@@ -41,10 +37,10 @@ func TestGetSubscription_Success(t *testing.T) {
 		EndDate:     &endDate,
 	}
 
-	mockSubRepo.EXPECT().SelectByID(c.Request.Context(), subID).Return(mockSub, nil)
+	mockGetSubRepo.EXPECT().SelectByID(ctx, subID).Return(mockSub, nil)
 
-	useCase := NewGetSubUsecase(mockSubRepo, mockLogger)
-	response, err := useCase.GetSubscription(c, subID)
+	useCase := NewGetSubUseCase(mockGetSubRepo, mockLogger)
+	response, err := useCase.GetSubscription(ctx, subID)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
@@ -58,11 +54,11 @@ func TestGetSubscription_Success(t *testing.T) {
 
 func TestGetSubscription_Failure_InvalidSubID(t *testing.T) {
 	initGetSubTestMocks(t)
-	c, _ := gin.CreateTestContext(nil)
+	ctx := context.Background()
 	subID := "invalid-uuid"
 
-	useCase := NewGetSubUsecase(mockSubRepo, mockLogger)
-	_, err := useCase.GetSubscription(c, subID)
+	useCase := NewGetSubUseCase(mockGetSubRepo, mockLogger)
+	_, err := useCase.GetSubscription(ctx, subID)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, ErrInvalidUUID)
@@ -71,14 +67,12 @@ func TestGetSubscription_Failure_InvalidSubID(t *testing.T) {
 func TestGetSubscription_Failure_NotFound(t *testing.T) {
 	initGetSubTestMocks(t)
 	ctx := context.Background()
-	c, _ := gin.CreateTestContext(nil)
-	c.Request = &http.Request{Context: ctx}
 	subID := uuid.New().String()
 
-	mockSubRepo.EXPECT().SelectByID(c.Request.Context(), subID).Return(entities.Subscription{}, ErrEntityNotFound)
+	mockGetSubRepo.EXPECT().SelectByID(ctx, subID).Return(entities.Subscription{}, ErrEntityNotFound)
 
-	useCase := NewGetSubUsecase(mockSubRepo, mockLogger)
-	_, err := useCase.GetSubscription(c, subID)
+	useCase := NewGetSubUseCase(mockGetSubRepo, mockLogger)
+	_, err := useCase.GetSubscription(ctx, subID)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, ErrEntityNotFound)
@@ -87,15 +81,13 @@ func TestGetSubscription_Failure_NotFound(t *testing.T) {
 func TestGetSubscription_Failure_DatabaseError(t *testing.T) {
 	initGetSubTestMocks(t)
 	ctx := context.Background()
-	c, _ := gin.CreateTestContext(nil)
-	c.Request = &http.Request{Context: ctx}
 	subID := uuid.New().String()
 
 	expectedErr := errors.New("database error")
-	mockSubRepo.EXPECT().SelectByID(c.Request.Context(), subID).Return(entities.Subscription{}, expectedErr)
+	mockGetSubRepo.EXPECT().SelectByID(ctx, subID).Return(entities.Subscription{}, expectedErr)
 
-	useCase := NewGetSubUsecase(mockSubRepo, mockLogger)
-	_, err := useCase.GetSubscription(c, subID)
+	useCase := NewGetSubUseCase(mockGetSubRepo, mockLogger)
+	_, err := useCase.GetSubscription(ctx, subID)
 
 	assert.Error(t, err)
 	assert.ErrorIs(t, err, expectedErr)

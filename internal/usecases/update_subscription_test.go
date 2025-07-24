@@ -13,12 +13,12 @@ import (
 )
 
 var (
-	mockSubRepo *MockSubRepository
+	mockUpdateSubRepo *MockUpdateSubRepository
 )
 
 func initUpdateSubTestMocks(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	mockSubRepo = NewMockSubRepository(ctrl)
+	mockUpdateSubRepo = NewMockUpdateSubRepository(ctrl)
 }
 
 func TestUpdateSubscription_Success(t *testing.T) {
@@ -33,9 +33,9 @@ func TestUpdateSubscription_Success(t *testing.T) {
 	}
 
 	sub := gomock.AssignableToTypeOf(&entities.Subscription{})
-	mockSubRepo.EXPECT().Update(ctx, sub).Return(nil)
+	mockUpdateSubRepo.EXPECT().Update(ctx, sub).Return(nil)
 
-	useCase := NewUpdateSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewUpdateSubUseCase(mockUpdateSubRepo, mockLogger)
 	response, err := useCase.UpdateSubscription(ctx, subID, req)
 
 	assert.NoError(t, err)
@@ -56,7 +56,7 @@ func TestUpdateSubscription_Failure_InvalidSubID(t *testing.T) {
 		StartDate:   "07-2025",
 	}
 
-	useCase := NewUpdateSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewUpdateSubUseCase(mockUpdateSubRepo, mockLogger)
 	_, err := useCase.UpdateSubscription(ctx, "invalid-uuid", req)
 
 	assert.Error(t, err)
@@ -74,7 +74,7 @@ func TestUpdateSubscription_Failure_InvalidUserID(t *testing.T) {
 		StartDate:   "07-2025",
 	}
 
-	useCase := NewUpdateSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewUpdateSubUseCase(mockUpdateSubRepo, mockLogger)
 	_, err := useCase.UpdateSubscription(ctx, subID, req)
 
 	assert.Error(t, err)
@@ -92,7 +92,7 @@ func TestUpdateSubscription_Failure_InvalidStartDate(t *testing.T) {
 		StartDate:   "invalid-date",
 	}
 
-	useCase := NewUpdateSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewUpdateSubUseCase(mockUpdateSubRepo, mockLogger)
 	_, err := useCase.UpdateSubscription(ctx, subID, req)
 
 	assert.Error(t, err)
@@ -110,9 +110,9 @@ func TestUpdateSubscription_Failure_NotFound(t *testing.T) {
 		StartDate:   "07-2025",
 	}
 
-	mockSubRepo.EXPECT().Update(ctx, gomock.Any()).Return(ErrEntityNotFound)
+	mockUpdateSubRepo.EXPECT().Update(ctx, gomock.Any()).Return(ErrEntityNotFound)
 
-	useCase := NewUpdateSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewUpdateSubUseCase(mockUpdateSubRepo, mockLogger)
 	_, err := useCase.UpdateSubscription(ctx, subID, req)
 
 	assert.Error(t, err)
@@ -131,9 +131,9 @@ func TestUpdateSubscription_Failure_DatabaseError(t *testing.T) {
 	}
 
 	expectedErr := errors.New("database error")
-	mockSubRepo.EXPECT().Update(ctx, gomock.Any()).Return(expectedErr)
+	mockUpdateSubRepo.EXPECT().Update(ctx, gomock.Any()).Return(expectedErr)
 
-	useCase := NewUpdateSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewUpdateSubUseCase(mockUpdateSubRepo, mockLogger)
 	_, err := useCase.UpdateSubscription(ctx, subID, req)
 
 	assert.Error(t, err)

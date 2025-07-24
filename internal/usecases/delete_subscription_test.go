@@ -11,12 +11,12 @@ import (
 )
 
 var (
-	mockSubRepo *MockSubRepository
+	mockDeleteSubRepo *MockDeleteSubRepository
 )
 
 func initDeleteSubTestMocks(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	mockSubRepo = NewMockSubRepository(ctrl)
+	mockDeleteSubRepo = NewMockDeleteSubRepository(ctrl)
 }
 
 func TestDeleteSubscription_Success(t *testing.T) {
@@ -24,9 +24,9 @@ func TestDeleteSubscription_Success(t *testing.T) {
 	ctx := context.Background()
 	subID := uuid.New().String()
 
-	mockSubRepo.EXPECT().Delete(ctx, subID).Return(nil)
+	mockDeleteSubRepo.EXPECT().Delete(ctx, subID).Return(nil)
 
-	useCase := NewDeleteSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewDeleteSubUseCase(mockDeleteSubRepo, mockLogger)
 	err := useCase.DeleteSubscription(ctx, subID)
 
 	assert.NoError(t, err)
@@ -37,7 +37,7 @@ func TestDeleteSubscription_Failure_InvalidSubID(t *testing.T) {
 	ctx := context.Background()
 	subID := "invalid-uuid"
 
-	useCase := NewDeleteSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewDeleteSubUseCase(mockDeleteSubRepo, mockLogger)
 	err := useCase.DeleteSubscription(ctx, subID)
 
 	assert.Error(t, err)
@@ -49,9 +49,9 @@ func TestDeleteSubscription_Failure_NotFound(t *testing.T) {
 	ctx := context.Background()
 	subID := uuid.New().String()
 
-	mockSubRepo.EXPECT().Delete(ctx, subID).Return(ErrEntityNotFound)
+	mockDeleteSubRepo.EXPECT().Delete(ctx, subID).Return(ErrEntityNotFound)
 
-	useCase := NewDeleteSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewDeleteSubUseCase(mockDeleteSubRepo, mockLogger)
 	err := useCase.DeleteSubscription(ctx, subID)
 
 	assert.Error(t, err)
@@ -64,9 +64,9 @@ func TestDeleteSubscription_Failure_DatabaseError(t *testing.T) {
 	subID := uuid.New().String()
 
 	expectedErr := errors.New("database error")
-	mockSubRepo.EXPECT().Delete(ctx, subID).Return(expectedErr)
+	mockDeleteSubRepo.EXPECT().Delete(ctx, subID).Return(expectedErr)
 
-	useCase := NewDeleteSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewDeleteSubUseCase(mockDeleteSubRepo, mockLogger)
 	err := useCase.DeleteSubscription(ctx, subID)
 
 	assert.Error(t, err)

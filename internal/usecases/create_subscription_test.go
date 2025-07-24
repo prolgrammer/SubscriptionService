@@ -13,12 +13,12 @@ import (
 )
 
 var (
-	mockSubRepo *MockSubRepository
+	mockCreateSubRepo *MockCreateSubRepository
 )
 
 func initCreateSubTestMocks(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	mockSubRepo = NewMockSubRepository(ctrl)
+	mockCreateSubRepo = NewMockCreateSubRepository(ctrl)
 }
 
 func TestCreateSubscription_Success(t *testing.T) {
@@ -32,9 +32,9 @@ func TestCreateSubscription_Success(t *testing.T) {
 	}
 
 	sub := gomock.AssignableToTypeOf(&entities.Subscription{})
-	mockSubRepo.EXPECT().Insert(ctx, sub).Return(nil)
+	mockCreateSubRepo.EXPECT().Insert(ctx, sub).Return(nil)
 
-	useCase := NewCreateSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewCreateSubUseCase(mockCreateSubRepo, mockLogger)
 	response, err := useCase.CreateSubscription(ctx, req)
 
 	assert.NoError(t, err)
@@ -55,7 +55,7 @@ func TestCreateSubscription_Failure_InvalidUserID(t *testing.T) {
 		StartDate:   "07-2025",
 	}
 
-	useCase := NewCreateSubUsecase(mockSubRepo, mockLogger)
+	useCase := NewCreateSubUseCase(mockCreateSubRepo, mockLogger)
 	_, err := useCase.CreateSubscription(ctx, req)
 
 	assert.Error(t, err)
@@ -72,7 +72,7 @@ func TestCreateSubscription_Failure_InvalidStartDate(t *testing.T) {
 		StartDate:   "invalid-date",
 	}
 
-	useCase := NewCreateSubUsecase(mockSubRepo)
+	useCase := NewCreateSubUseCase(mockCreateSubRepo, mockLogger)
 	_, err := useCase.CreateSubscription(ctx, req)
 
 	assert.Error(t, err)
@@ -90,9 +90,9 @@ func TestCreateSubscription_Failure_InsertError(t *testing.T) {
 	}
 
 	expectedErr := errors.New("database error")
-	mockSubRepo.EXPECT().Insert(ctx, gomock.Any()).Return(expectedErr)
+	mockCreateSubRepo.EXPECT().Insert(ctx, gomock.Any()).Return(expectedErr)
 
-	useCase := NewCreateSubUsecase(mockSubRepo)
+	useCase := NewCreateSubUseCase(mockCreateSubRepo, mockLogger)
 	_, err := useCase.CreateSubscription(ctx, req)
 
 	assert.Error(t, err)
